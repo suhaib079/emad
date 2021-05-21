@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../css/styles.css">
+    <title>Document</title>
+</head>
+<body>
+    <%- include('../layout/header.ejs')%>
+    <main>
+ <% suhaib.forEach(info =>{ %>
+    <h1><%=info.character%></h1>
+    <img src="<%=info.image%>" alt="">
+    <p><%=info.quote%></p>
+    <p><%=info.characterDirection%></p>
+
+    <form action="/sendtodb" method="POST">
+    <input type="hidden" name="character" value="<%=info.character%>">
+    <input type="hidden" name="image" value="<%=info.image%>">
+    <input type="hidden" name="quote" value="<%=info.quote%>">
+    <input type="hidden" name="characterDirection" value="<%=info.characterDirection%>">
+
+    <button type="submit">add to fav</button>
+    </form>
+
+ <% }) %>
+
+    </main>
+    
+</body>
+</html>
