@@ -1,104 +1,98 @@
-'use strict'
+//http://hp-api.herokuapp.com/api/character
 
-const express = require('express');
-const pg = require('pg');
-const methodoverride = require('method-override');
-const cors =require('cors');
-const superagent=require('superagent');
+const express=require('express')
+const pg=require('pg');
+const superagent=require('superagent')
+const cors=require('cors')
+const methodoverride=require('method-override')
+
 require('dotenv').config();
+const PORT=process.env.PORT;
+const DATABASE_URL= process.env.DATABASE_URL;
 
-const PORT = process.env.PORT;
-const DATABASE_URL=process.env.DATABASE_URL;
+const app=express();
+const client =new pg.Client(DATABASE_URL)
+app.use(express.urlencoded({extended:true}))
+app.use(express.static('./public'))
+app.use(methodoverride('_method'))
+app.use(cors());
+app.set('view engine','ejs')
 
-const server=express();
-const client=new pg.Client(DATABASE_URL);
-server.use(express.urlencoded({extended:true}));
-server.use(express.static('./public'));
-server.use(cors());
-server.use(methodoverride('_method'));
-server.set('view engine','ejs');
+app.get('/',renderall)
+app.post('/saveDataBASE',saveInDB)
+app.get('/renderfromdb',renderdb)
+app.get('/viewdetails/:id',deatils)
+app.put('/updatechr/:id',updatechar)
+app.delete('/deletechr/:id',deletechr)
 
-
-
-server.get('/',renderall);
-server.post('/sendtodb',sendtodb)
-server.get('/addtofav',renderfromdb)
-server.get('/viewdetail/:id',viewdetail)
-server.put('/update/:id',updateinfo)
-server.delete('/delete/:id',deleteinfo)
-
-
-function deleteinfo(req,res){
-    const id =req.params.id;
-    const sql=`DELETE FROM food WHERE id=$1`
-    const safevalue=[id];
-    client.query(sql,safevalue).then(() =>{
-        res.redirect(`/addtofav`)
-    })
-
+function deletechr(req,res){
+const id=req.params.id;
+const safevalue=[id];
+const sql=`DELETE FROM harry WHERE id=$1`
+client.query(sql,safevalue).then(()=>{
+    res.redirect('/renderfromdb')
+})
 
 }
 
-function updateinfo(req,res){
-    const id =req.params.id;
-    const {character,image,quote,characterDirection}=req.body;
-    const sql =`UPDATE food SET character=$1 , image=$2 , quote=$3 , characterDirection=$4 WHERE id=$5`
-    const safevalue = [character,image,quote,characterDirection,id]
-
-    client.query(sql,safevalue).then(() =>{
-        res.redirect(`/viewdetail/${id}`)
+function updatechar (req,res){
+    const {name,image,house,alive}=req.body
+    const id = req.params.id
+    const sql=`UPDATE harry SET name=$1 ,image=$2 , house=$3 , alive=$4 WHERE id=$5 `
+    const safevalue=[name,image,house,alive,id]
+    client.query(sql,safevalue).then(()=>{
+        res.redirect(`/viewdetails/${id}`)
     })
 }
 
-
-function viewdetail(req,res){
-    const id=req.params.id
-    const sql =`SELECT * FROM food WHERE id=$1;`
+function deatils(req,res){
+    const id=req.params.id;
+    const sql =`SELECT * FROM harry WHERE id=$1`
     const safevalue=[id]
     client.query(sql,safevalue).then(data =>{
         res.render('pages/details',{suhaib:data.rows})
     })
+
 }
 
-function renderfromdb(req,res){
-    const sql=`SELECT * FROM food;`
-    client.query(sql).then(data =>{
+function renderdb(req,res){
+    const sql=`SELECT * FROM harry;`
+    client.query(sql).then(data=>{
         res.render('pages/favrot',{suhaib:data.rows})
     })
 }
 
-function sendtodb(req,res){
-const {character,image,quote,characterDirection}=req.body;
-const sql =`INSERT INTO food(character,image,quote,characterDirection) VALUES($1,$2,$3,$4)`
-const safevalue=[character,image,quote,characterDirection]
-client.query(sql,safevalue).then(()=>{
-    res.redirect('/addtofav')
-})
-
+function saveInDB(req,res){
+    const {name,image,house,alive}=req.body
+    const sql=`INSERT INTO harry(name,image,house,alive) VALUES($1,$2,$3,$4) `
+    const safevalue=[name,image,house,alive]
+    client.query(sql,safevalue).then(()=>{
+        res.redirect('/renderfromdb')
+    })
 }
 
-function Simpson(info){
-    this.character=info.character;
+function Potter(info){
+    this.name=info.name;
     this.image=info.image;
-    this.quote=info.quote;
-    this.characterDirection=info.characterDirection;
+    this.house=info.house;
+    this.alive=info.alive;
 }
 
 function renderall(req,res){
-const url=`https://thesimpsonsquoteapi.glitch.me/quotes?count=10`
-superagent.get(url).set('User-Agent', '1.0').then(data =>{
-    const simp =data.body.map(result=>{
-        return new Simpson(result)
-    })
-    res.render('pages/home',{suhaib:simp})
-})
 
+    const url=`http://hp-api.herokuapp.com/api/characters`
+    superagent.get(url).then(data =>{
+        const hp =data.body.map(result =>{
+            return new Potter(result)
+        })
+        res.render('pages/home',{suhaib:hp})
+    })
 }
 
-
 client.connect().then(()=>{
-    server.listen(PORT,()=>{
+    app.listen(PORT,()=>{
         console.log(`hi ${PORT}`);
     })
 })
+
 

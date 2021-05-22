@@ -4,34 +4,41 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../css/style.css">
     <title>Document</title>
 </head>
 <body>
-    <%- include('../layout/header.ejs')%>
-
+    <header>
+        <%-include('../layout/header.ejs')%>
+    </header>
     <main>
- <% suhaib.forEach(info =>{ %>
-    <h1><%=info.character%></h1>
-    <img src="<%=info.image%>" alt="">
-    <p><%=info.quote%></p>
-    <p><%=info.characterDirection%></p>
+        <%suhaib.forEach(info =>{%>
+        
+            <div>
+            <p><%=info.name%></p>
+            <img src="<%=info.image%>" alt="">
+            <p><%=info.house%></p>
+            <p><%=info.alive%></p>
+        
+            
 
-    <form action="/update/<%=info.id%>?_method=put" method="POST">
-        <input type="text" name="character" value="<%=info.character%>">
-        <input type="text" name="image" value="<%=info.image%>">
-        <input type="text" name="quote" value="<%=info.quote%>">
-        <input type="text" name="characterDirection" value="<%=info.characterDirection%>">
+            
+            <form action="/updatechr/<%=info.id%>?_method=put" method="POST">
+                <input type="text" value="<%=info.name%>" name="name">
+                <input type="text" value="<%=info.image%>" name="image">
+                <input type="text" value="<%=info.house%>" name="house">
+                <input type="text" value="<%=info.alive%>" name="alive">
+             <button type="submit">update</button>
+            </form>
+
+            <form action="/deletechr/<%=info.id%>?_method=delete" method="POST">
+                <button type="submit">delete</button>
+               </form>
+   </div>
     
-        <button type="submit">update</button>
-        </form>
-        <form action="/delete/<%=info.id%>?_method=delete" method="POST">
-<button type="submit">delete fuckin character</button>
-        </form>
-
-
- <% }) %>
-
-    </main>
+        <%})%>
+        
+            </main>
     
 </body>
 </html>

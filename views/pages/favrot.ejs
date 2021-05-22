@@ -4,23 +4,30 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../css/style.css">
     <title>Document</title>
 </head>
 <body>
-    <%- include('../layout/header.ejs')%>
+    <header>
+        <%-include('../layout/header.ejs')%>
+    </header>
 
     <main>
- <% suhaib.forEach(info =>{ %>
-    <h1><%=info.character%></h1>
-    <img src="<%=info.image%>" alt="">
-    <p><%=info.quote%></p>
-    <p><%=info.characterDirection%></p>
-
-   <a href="/viewdetail/<%=info.id%>">details</a>
-
- <% }) %>
-
-    </main>
+        <%suhaib.forEach(info =>{%>
+        
+            <div>
+            <p><%=info.name%></p>
+            <img src="<%=info.image%>" alt="">
+            <p><%=info.house%></p>
+            <p><%=info.alive%></p>
+        
+            
+            <a href="/viewdetails/<%=info.id%>">view details</a>
+        </div>
+    
+        <%})%>
+        
+            </main>
     
 </body>
 </html>

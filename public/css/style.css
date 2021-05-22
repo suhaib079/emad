@@ -1,0 +1,22 @@
+header {
+    background-color: blue;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+main{
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: space-around;
+    margin-bottom: 30px;
+}
+img{
+    width: 200px;
+    height: 200px;
+}
+body{
+    background-color: brown;
+}

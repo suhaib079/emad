@@ -1,7 +1,8 @@
-CREATE TABLE IF NOT EXISTS food(
+CREATE TABLE IF NOT EXISTS harry(
     id SERIAL PRIMARY KEY,
-    character VARCHAR(255),
-    image TEXT,
-    quote VARCHAR(255),
-    characterDirection VARCHAR(255)
+    name VARCHAR(255),
+   image TEXT,
+    house VARCHAR(255),
+    alive boolean NOT NULL DEFAULT true
+
 )
